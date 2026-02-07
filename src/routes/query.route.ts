@@ -13,8 +13,31 @@ const querySchema = z.object({
 });
 
 /**
- * POST /api/query
- * Natural language RAG query
+ * @openapi
+ * /api/query:
+ *   post:
+ *     summary: RAG query
+ *     description: Natural language query that retrieves relevant error codes and generates a troubleshooting response
+ *     tags: [Query]
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/QueryRequest'
+ *     responses:
+ *       200:
+ *         description: Query result with AI-generated answer
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/QueryResponse'
+ *       400:
+ *         description: Invalid request
+ *       401:
+ *         description: Missing API key
  */
 router.post("/", async (req, res) => {
   try {
@@ -39,8 +62,32 @@ router.post("/", async (req, res) => {
 });
 
 /**
- * GET /api/error/:code
- * Exact error code lookup
+ * @openapi
+ * /api/query/error/{code}:
+ *   get:
+ *     summary: Exact error code lookup
+ *     description: Get a specific error code by its exact code number
+ *     tags: [Query]
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: code
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Error code number (e.g., 395405)
+ *     responses:
+ *       200:
+ *         description: Error code found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorCode'
+ *       404:
+ *         description: Error code not found
+ *       401:
+ *         description: Missing API key
  */
 router.get("/error/:code", async (req, res) => {
   try {

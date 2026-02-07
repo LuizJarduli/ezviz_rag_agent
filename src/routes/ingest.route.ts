@@ -7,8 +7,41 @@ const router = Router();
 router.use(authMiddleware);
 
 /**
- * POST /api/ingest
- * Ingest error codes from JSON body
+ * @openapi
+ * /api/ingest:
+ *   post:
+ *     summary: Ingest error codes
+ *     description: Bulk load error codes from JSON into the vector database
+ *     tags: [Ingestion]
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               type: object
+ *               properties:
+ *                 moduleCode: { type: string }
+ *                 detailCode: { type: string }
+ *                 description: { type: string }
+ *                 solution: { type: string }
+ *                 updateTime: { type: number }
+ *     responses:
+ *       200:
+ *         description: Successfully ingested
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IngestResponse'
+ *       400:
+ *         description: Invalid request
+ *       401:
+ *         description: Missing API key
+ *       403:
+ *         description: Invalid API key
  */
 router.post("/", async (req, res) => {
   try {

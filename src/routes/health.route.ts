@@ -3,6 +3,23 @@ import { getIngestionStats } from "../services/rag.service.js";
 
 const router = Router();
 
+/**
+ * @openapi
+ * /health:
+ *   get:
+ *     summary: Health check
+ *     description: Check API and ChromaDB connection status
+ *     tags: [Health]
+ *     responses:
+ *       200:
+ *         description: Service is healthy
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/HealthResponse'
+ *       503:
+ *         description: Service is unhealthy
+ */
 router.get("/", async (_req, res) => {
   try {
     const stats = await getIngestionStats();

@@ -1,5 +1,7 @@
 import express from "express";
+import swaggerUi from "swagger-ui-express";
 import { env } from "./config/env.js";
+import { swaggerSpec } from "./config/swagger.js";
 import { initChroma } from "./services/chroma.service.js";
 import healthRoute from "./routes/health.route.js";
 import ingestRoute from "./routes/ingest.route.js";
@@ -9,6 +11,10 @@ const app = express();
 
 // Middleware
 app.use(express.json({ limit: "50mb" }));
+
+// Swagger docs
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.get("/docs.json", (_req, res) => res.json(swaggerSpec));
 
 // Routes
 app.use("/health", healthRoute);
@@ -34,10 +40,11 @@ async function start() {
     await initChroma();
 
     app.listen(env.PORT, () => {
-      console.log(`   EZVIZ RAG Agent running on port ${env.PORT}`);
-      console.log(`   Health: http://localhost:${env.PORT}/health`);
-      console.log(`   Ingest: POST http://localhost:${env.PORT}/api/ingest`);
-      console.log(`   Query:  POST http://localhost:${env.PORT}/api/query`);
+      console.log(`EZVIZ RAG Agent running on port ${env.PORT}`);
+      console.log(`Docs:   http://localhost:${env.PORT}/docs`);
+      console.log(`Health: http://localhost:${env.PORT}/health`);
+      console.log(`Ingest: POST http://localhost:${env.PORT}/api/ingest`);
+      console.log(`Query:  POST http://localhost:${env.PORT}/api/query`);
     });
   } catch (error) {
     console.error("Failed to start server:", error);
