@@ -12,18 +12,21 @@ let collection: Collection | null = null;
 
 /**
  * Initialize ChromaDB client and collection
+ * Uses ChromaDB's default embedding function (all-MiniLM-L6-v2)
  */
 export async function initChroma(): Promise<void> {
   client = new ChromaClient({
     path: `http://${env.CHROMA_HOST}:${env.CHROMA_PORT}`,
   });
 
+  // Create collection WITHOUT specifying embeddingFunction
+  // ChromaDB will use its default embedding function
   collection = await client.getOrCreateCollection({
     name: COLLECTION_NAME,
     metadata: { description: "EZVIZ SDK error codes" },
   });
 
-  console.log(`[DEBUG] ChromaDB connected: ${COLLECTION_NAME}`);
+  console.log(`[DEBUG][chroma] Connected: ${COLLECTION_NAME}`);
 }
 
 /**
@@ -37,17 +40,14 @@ export function getCollection(): Collection {
 }
 
 /**
- * Add error codes to the collection
+ * Add error codes to the collection using ChromaDB's built-in embeddings
+ * Just pass documents - Chroma will embed them automatically
  */
-export async function addErrorCodes(
-  errorCodes: ErrorCode[],
-  embeddings: number[][],
-): Promise<void> {
+export async function addErrorCodes(errorCodes: ErrorCode[]): Promise<void> {
   const col = getCollection();
 
   await col.upsert({
     ids: errorCodes.map((ec) => ec.id),
-    embeddings,
     metadatas: errorCodes.map((ec) => ({
       code: ec.code,
       description: ec.description,
@@ -55,7 +55,9 @@ export async function addErrorCodes(
       category: ec.category,
       moduleCode: ec.moduleCode,
     })),
-    documents: errorCodes.map((ec) => `${ec.description} ${ec.solution}`),
+    documents: errorCodes.map(
+      (ec) => `Error ${ec.code}: ${ec.description} ${ec.solution}`,
+    ),
   });
 
   console.log(
@@ -64,16 +66,16 @@ export async function addErrorCodes(
 }
 
 /**
- * Query error codes by embedding similarity
+ * Query error codes by text - ChromaDB handles embedding automatically
  */
-export async function queryByEmbedding(
-  embedding: number[],
+export async function queryByText(
+  queryText: string,
   topK: number = 5,
 ): Promise<ErrorCode[]> {
   const col = getCollection();
 
   const results = await col.query({
-    queryEmbeddings: [embedding],
+    queryTexts: [queryText],
     nResults: topK,
   });
 

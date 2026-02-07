@@ -1,26 +1,20 @@
 import type {
-  RawErrorCode,
   ErrorCode,
   QueryResponse,
   IngestResponse,
 } from "../types/error-code.types.js";
-import {
-  parseErrorCodes,
-  transformErrorCode,
-  createDocumentText,
-} from "../utils/parser.js";
-import { generateEmbedding, generateEmbeddings } from "./embedding.service.js";
+import { parseErrorCodes, transformErrorCode } from "../utils/parser.js";
 import { generateResponse } from "./llm.service.js";
 import {
   addErrorCodes,
-  queryByEmbedding,
+  queryByText,
   getByCode,
   getStats,
 } from "./chroma.service.js";
 
 /**
  * Ingest error codes from raw JSON data
- * Saves each batch immediately so progress isn't lost on errors
+ * Uses ChromaDB's built-in embeddings - no external API calls!
  */
 export async function ingestErrorCodes(
   rawData: unknown,
@@ -40,41 +34,36 @@ export async function ingestErrorCodes(
 
   if (duplicatesRemoved > 0) {
     console.log(
-      `Removed ${duplicatesRemoved} duplicates, processing ${uniqueCodes.length} unique codes`,
+      `[DEBUG][rag] Removed ${duplicatesRemoved} duplicates, processing ${uniqueCodes.length} unique codes`,
     );
   }
 
-  // Process in batches, saving each immediately
-  const BATCH_SIZE = 10;
+  // Process in batches - ChromaDB handles embeddings internally
+  const BATCH_SIZE = 100; // Much larger batches since no API rate limits
   let successCount = 0;
-  let lastError: Error | null = null;
 
   for (let i = 0; i < uniqueCodes.length; i += BATCH_SIZE) {
     const batch = uniqueCodes.slice(i, i + BATCH_SIZE);
 
     try {
-      const texts = batch.map(createDocumentText);
-      const embeddings = await generateEmbeddings(texts);
-
-      // Save immediately after embedding
-      await addErrorCodes(batch, embeddings);
+      await addErrorCodes(batch);
       successCount += batch.length;
 
       console.log(
         `[DEBUG][rag] Ingested ${successCount}/${uniqueCodes.length} codes`,
       );
     } catch (error) {
-      lastError = error instanceof Error ? error : new Error(String(error));
+      const lastError =
+        error instanceof Error ? error : new Error(String(error));
       console.error(
         `[DEBUG][rag] Batch failed at ${i}, saved ${successCount} codes so far:`,
         lastError.message,
       );
 
-      // Return partial success
       return {
         success: successCount > 0,
         count: successCount,
-        message: `[DEBUG][rag] Ingested ${successCount}/${uniqueCodes.length} codes. Error: ${lastError.message}`,
+        message: `Ingested ${successCount}/${uniqueCodes.length} codes. Error: ${lastError.message}`,
       };
     }
   }
@@ -82,22 +71,20 @@ export async function ingestErrorCodes(
   return {
     success: true,
     count: successCount,
-    message: `[DEBUG][rag] Successfully ingested ${successCount} error codes`,
+    message: `Successfully ingested ${successCount} error codes`,
   };
 }
 
 /**
  * Query with natural language, returning RAG-augmented response
+ * Uses ChromaDB's built-in embeddings for similarity search
  */
 export async function query(
   queryText: string,
   topK: number = 5,
 ): Promise<QueryResponse> {
-  // Generate query embedding
-  const queryEmbedding = await generateEmbedding(queryText);
-
-  // Retrieve relevant error codes
-  const sources = await queryByEmbedding(queryEmbedding, topK);
+  // Retrieve relevant error codes - ChromaDB handles embedding automatically
+  const sources = await queryByText(queryText, topK);
 
   // Generate response with context
   const answer = await generateResponse(queryText, sources);
