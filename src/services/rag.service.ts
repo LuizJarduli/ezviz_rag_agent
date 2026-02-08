@@ -39,7 +39,7 @@ export async function ingestErrorCodes(
   }
 
   // Process in batches - ChromaDB handles embeddings internally
-  const BATCH_SIZE = 100; // Much larger batches since no API rate limits
+  const BATCH_SIZE = 100;
   let successCount = 0;
 
   for (let i = 0; i < uniqueCodes.length; i += BATCH_SIZE) {
