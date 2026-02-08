@@ -181,3 +181,44 @@ export async function getStats(): Promise<{ count: number }> {
   const count = await col.count();
   return { count };
 }
+
+/**
+ * Get all error codes with optional pagination
+ */
+export async function getAllErrors(
+  limit: number = 100,
+  offset: number = 0,
+): Promise<{ errors: ErrorCode[]; total: number }> {
+  const col = getCollection();
+  const total = await col.count();
+
+  const results = await col.get({
+    limit,
+    offset,
+    include: [IncludeEnum.Metadatas],
+  });
+
+  if (!results.metadatas || results.metadatas.length === 0) {
+    return { errors: [], total };
+  }
+
+  const errors = results.metadatas
+    .filter(
+      (metadata): metadata is NonNullable<typeof metadata> => metadata !== null,
+    )
+    .map((metadata, index) => {
+      const m = metadata as unknown as ErrorCodeMetadata;
+      const id =
+        results.ids && results.ids[index] ? results.ids[index] : m.code;
+      return {
+        id,
+        code: m.code,
+        description: m.description,
+        solution: m.solution,
+        category: m.category,
+        moduleCode: m.moduleCode,
+      };
+    });
+
+  return { errors, total };
+}

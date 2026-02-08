@@ -11,6 +11,7 @@ import {
   getByCode,
   getByMetadataCode,
   getStats,
+  getAllErrors as getAllErrorsFromChroma,
 } from "./chroma.service.js";
 
 /**
@@ -139,4 +140,14 @@ export async function getErrorByCode(code: string): Promise<ErrorCode | null> {
  */
 export async function getIngestionStats(): Promise<{ count: number }> {
   return getStats();
+}
+
+/**
+ * Get all error codes with pagination
+ */
+export async function getAllErrors(
+  limit: number = 100,
+  offset: number = 0,
+): Promise<{ errors: ErrorCode[]; total: number }> {
+  return getAllErrorsFromChroma(limit, offset);
 }

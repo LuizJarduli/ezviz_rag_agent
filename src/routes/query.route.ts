@@ -1,11 +1,58 @@
 import { Router } from "express";
 import { z } from "zod";
-import { query, getErrorByCode } from "../services/rag.service.js";
+import {
+  query,
+  getErrorByCode,
+  getAllErrors,
+} from "../services/rag.service.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
 router.use(authMiddleware);
+
+/**
+ * @openapi
+ * /api/query/errors:
+ *   get:
+ *     summary: List all error codes
+ *     description: Get all error codes from the database with optional pagination
+ *     tags: [Query]
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: limit
+ *         in: query
+ *         schema:
+ *           type: integer
+ *           default: 100
+ *         description: Maximum number of error codes to return
+ *       - name: offset
+ *         in: query
+ *         schema:
+ *           type: integer
+ *           default: 0
+ *         description: Number of error codes to skip
+ *     responses:
+ *       200:
+ *         description: List of error codes
+ *       401:
+ *         description: Missing API key
+ */
+router.get("/errors", async (req, res) => {
+  try {
+    const limit = Math.min(Number(req.query.limit) || 100, 500);
+    const offset = Number(req.query.offset) || 0;
+
+    const result = await getAllErrors(limit, offset);
+    res.json(result);
+  } catch (error) {
+    console.error("List errors error:", error);
+    res.status(500).json({
+      error: error instanceof Error ? error.message : "Failed to list errors",
+    });
+  }
+});
 
 const querySchema = z.object({
   query: z.string().min(1, "Query is required"),
