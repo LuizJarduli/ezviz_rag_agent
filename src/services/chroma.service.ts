@@ -101,7 +101,7 @@ export async function queryByText(
 }
 
 /**
- * Get error code by exact code match
+ * Get error code by exact code match (ID lookup)
  */
 export async function getByCode(code: string): Promise<ErrorCode | null> {
   const col = getCollection();
@@ -124,6 +124,47 @@ export async function getByCode(code: string): Promise<ErrorCode | null> {
   } = results.metadatas[0] as unknown as ErrorCodeMetadata;
   return {
     id: mCode,
+    code: mCode,
+    description,
+    solution,
+    category,
+    moduleCode,
+  };
+}
+
+/**
+ * Get error code by metadata 'code' field
+ * Useful when ID is composite (module_code) but user searches by code only
+ */
+export async function getByMetadataCode(
+  code: string,
+): Promise<ErrorCode | null> {
+  const col = getCollection();
+
+  const results = await col.get({
+    where: { code: code },
+    limit: 1,
+    include: [IncludeEnum.Metadatas],
+  });
+
+  if (!results.metadatas || results.metadatas.length === 0) {
+    return null;
+  }
+
+  const {
+    code: mCode,
+    description,
+    solution,
+    category,
+    moduleCode,
+  } = results.metadatas[0] as unknown as ErrorCodeMetadata;
+
+  // If IDs array exists and has elements, use the first one as ID
+  // Otherwise fallback to mCode
+  const id = results.ids && results.ids.length > 0 ? results.ids[0] : mCode;
+
+  return {
+    id,
     code: mCode,
     description,
     solution,
