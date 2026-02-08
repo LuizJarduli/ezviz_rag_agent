@@ -15,7 +15,6 @@ import {
 
 /**
  * Ingest error codes from raw JSON data
- * Uses ChromaDB's built-in embeddings - no external API calls!
  */
 export async function ingestErrorCodes(
   rawData: unknown,
