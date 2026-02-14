@@ -5,7 +5,8 @@ dotenv.config();
 
 const envSchema = z.object({
   PORT: z.string().default("3001").transform(Number),
-  GEMINI_API_KEY: z.string().min(1, "GEMINI_API_KEY is required"),
+  OLLAMA_HOST: z.string().default("http://host.docker.internal"),
+  OLLAMA_PORT: z.string().default("11434").transform(Number),
   CHROMA_HOST: z.string().default("localhost"),
   CHROMA_PORT: z.string().default("8000").transform(Number),
   API_KEYS: z

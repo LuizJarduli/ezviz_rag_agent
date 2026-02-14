@@ -1,10 +1,8 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { env } from "../config/env.js";
+import { Ollama } from "ollama";
 
-const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
-
-const embeddingModel = genAI.getGenerativeModel({
-  model: "gemini-embedding-001",
+const ollama = new Ollama({
+  host: `${env.OLLAMA_HOST}:${env.OLLAMA_PORT}`,
 });
 
 /**
@@ -23,21 +21,13 @@ export async function generateEmbedding(
 ): Promise<number[]> {
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
-      const result = await embeddingModel.embedContent(text);
-      return result.embedding.values;
+      const response = await ollama.embeddings({
+        model: "nomic-embed-text",
+        prompt: text,
+      });
+      return response.embedding;
     } catch (error) {
-      const isRateLimit =
-        error instanceof Error && error.message.includes("429");
-
-      if (isRateLimit && attempt < retries - 1) {
-        const delay = Math.pow(2, attempt + 1) * 1000; // s, 4s, 8s
-        console.log(
-          `[DEBUG][embedding] Rate limited, retrying in ${delay / 1000}s...`,
-        );
-        await sleep(delay);
-      } else {
-        throw error;
-      }
+      console.log(`[DEBUG][embedding] Error generating embedding: ${error}`);
     }
   }
   throw new Error("[DEBUG][embedding] Max retries exceeded");
