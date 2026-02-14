@@ -8,7 +8,7 @@ RAG-powered API for querying EZVIZ SDK error codes with natural language trouble
 
 - Node.js 20+
 - Docker & Docker Compose
-- Gemini API key
+- Ollama local server (optional)
 
 ### Setup
 
@@ -16,7 +16,7 @@ RAG-powered API for querying EZVIZ SDK error codes with natural language trouble
 
    ```bash
    cp .env.example .env
-   # Edit .env with your GEMINI_API_KEY
+   # Edit .env with your OLLAMA_HOST and OLLAMA_PORT
    ```
 
 2. **Start with Docker Compose:**
@@ -81,7 +81,8 @@ curl http://localhost:3001/api/query/error/395405 \
 | Variable | Description | Default |
 | -------- | ----------- | ------- |
 | `PORT` | API port | `3001` |
-| `GEMINI_API_KEY` | Gemini API key | required |
+| `OLLAMA_HOST` | Ollama host | `localhost` |
+| `OLLAMA_PORT` | Ollama port | `11434` |
 | `CHROMA_HOST` | ChromaDB host | `localhost` |
 | `CHROMA_PORT` | ChromaDB port | `8000` |
 | `API_KEYS` | Comma-separated valid API keys | required |
