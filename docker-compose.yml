@@ -40,6 +40,7 @@ services:
         - action: sync
           path: ./src
           target: /app/src
+    command: npx tsx watch src/index.ts
 
   api:
     build: .
@@ -53,6 +54,19 @@ services:
       - ./data:/app/data:ro
     profiles:
       - prod
+    command: node dist/index.js
+
+  mcp-agent:
+    build: .
+    depends_on:
+      - chromadb
+    env_file:
+      - ${ENV_FILE:-.env.mac}
+    volumes:
+      - ./src:/app/src:ro
+    command: npx tsx src/mcp.ts
+    ports:
+      - "3002:3002"
 
 volumes:
   chroma_data:

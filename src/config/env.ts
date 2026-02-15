@@ -9,6 +9,7 @@ const envSchema = z.object({
   OLLAMA_PORT: z.string().default("11434").transform(Number),
   CHROMA_HOST: z.string().default("localhost"),
   CHROMA_PORT: z.string().default("8000").transform(Number),
+  MCP_PORT: z.string().default("3002").transform(Number),
   API_KEYS: z
     .string()
     .min(1, "API_KEYS is required")

@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "docker:dev": "docker compose up chromadb api-dev",
     "docker:watch": "docker compose watch",
-    "docker:prod": "docker compose --profile prod up api"
+    "docker:prod": "docker compose --profile prod up api",
+    "mcp:mac": "docker compose up chromadb mcp-agent",
+    "mcp:linux": "docker compose --profile linux up chromadb mcp-agent"
   },
   "keywords": [
     "rag",
@@ -22,10 +24,12 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "chromadb": "^1.8.1",
     "chromadb-default-embed": "^2.14.0",
+    "cors": "^2.8.6",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "ollama": "^0.5.18",
@@ -34,6 +38,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.7",
     "tsx": "^4.19.2",
