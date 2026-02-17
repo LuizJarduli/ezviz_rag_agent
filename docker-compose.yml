@@ -24,46 +24,46 @@ services:
 
   api-dev:
     build:
-      context: .
+      context: ./packages/agent
       dockerfile: Dockerfile.dev
     ports:
       - "3001:3001"
     depends_on:
       - chromadb
     env_file:
-      - ${ENV_FILE:-.env.mac}
+      - ${ENV_FILE:-./packages/agent/.env.mac}
     volumes:
-      - ./src:/app/src:ro
-      - ./data:/app/data:ro
+      - ./packages/agent/src:/app/src:ro
+      - ./packages/agent/data:/app/data:ro
     develop:
       watch:
         - action: sync
-          path: ./src
+          path: ./packages/agent/src
           target: /app/src
     command: npx tsx watch src/index.ts
 
   api:
-    build: .
+    build: ./packages/agent
     ports:
       - "3001:3001"
     depends_on:
       - chromadb
     env_file:
-      - ${ENV_FILE:-.env.mac}
+      - ${ENV_FILE:-./packages/agent/.env.mac}
     volumes:
-      - ./data:/app/data:ro
+      - ./packages/agent/data:/app/data:ro
     profiles:
       - prod
     command: node dist/index.js
 
   mcp-agent:
-    build: .
+    build: ./packages/agent
     depends_on:
       - chromadb
     env_file:
-      - ${ENV_FILE:-.env.mac}
+      - ${ENV_FILE:-./packages/agent/.env.mac}
     volumes:
-      - ./src:/app/src:ro
+      - ./packages/agent/src:/app/src:ro
     command: npx tsx src/mcp.ts
     ports:
       - "3002:3002"
