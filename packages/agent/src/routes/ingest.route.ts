@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { ingestErrorCodes } from "../services/rag.service.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
+import { ingestErrorCodes } from "../services/rag.service.js";
 
 const router = Router();
 

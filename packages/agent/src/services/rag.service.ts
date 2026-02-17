@@ -11,8 +11,7 @@ import {
   getByCode,
   getByMetadataCode,
   getStats,
-  getAllErrors as getAllErrorsFromChroma,
-} from "./chroma.service.js";
+} from "./collections/error-codes.collection.js";
 
 /**
  * Ingest error codes from raw JSON data
@@ -149,5 +148,5 @@ export async function getAllErrors(
   limit: number = 100,
   offset: number = 0,
 ): Promise<{ errors: ErrorCode[]; total: number }> {
-  return getAllErrorsFromChroma(limit, offset);
+  return getAllErrors(limit, offset);
 }
