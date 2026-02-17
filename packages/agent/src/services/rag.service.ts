@@ -12,6 +12,11 @@ import {
   getByMetadataCode,
   getStats,
 } from "./collections/error-codes.collection.js";
+import {
+  queryDocumentation as queryDocs,
+  getStats as getDocStats,
+} from "./collections/documentation.collection.js";
+import type { DocumentationChunk } from "../types/documentation.types.js";
 
 /**
  * Ingest error codes from raw JSON data
@@ -149,4 +154,21 @@ export async function getAllErrors(
   offset: number = 0,
 ): Promise<{ errors: ErrorCode[]; total: number }> {
   return getAllErrors(limit, offset);
+}
+
+/**
+ * Query documentation
+ */
+export async function queryDocumentation(
+  queryText: string,
+  topK: number = 5,
+): Promise<DocumentationChunk[]> {
+  return queryDocs(queryText, topK);
+}
+
+/**
+ * Get documentation stats
+ */
+export async function getDocumentationStats(): Promise<{ count: number }> {
+  return getDocStats();
 }

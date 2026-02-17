@@ -4,6 +4,7 @@ import {
   query,
   getErrorByCode,
   getAllErrors,
+  queryDocumentation,
 } from "../services/rag.service.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 
@@ -102,6 +103,54 @@ router.post("/", async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error("Query error:", error);
+    res.status(500).json({
+      error: error instanceof Error ? error.message : "Query failed",
+    });
+  }
+});
+
+/**
+ * @openapi
+ * /api/query/documentation:
+ *   post:
+ *     summary: Search documentation
+ *     description: Search for relevant documentation chunks
+ *     tags: [Query]
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/QueryRequest'
+ *     responses:
+ *       200:
+ *         description: List of documentation chunks
+ *       400:
+ *         description: Invalid request
+ *       401:
+ *         description: Missing API key
+ */
+router.post("/documentation", async (req, res) => {
+  try {
+    const parsed = querySchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      res.status(400).json({
+        error: "Invalid request",
+        details: parsed.error.flatten().fieldErrors,
+      });
+      return;
+    }
+
+    const result = await queryDocumentation(
+      parsed.data.query,
+      parsed.data.topK,
+    );
+    res.json(result);
+  } catch (error) {
+    console.error("Documentation query error:", error);
     res.status(500).json({
       error: error instanceof Error ? error.message : "Query failed",
     });

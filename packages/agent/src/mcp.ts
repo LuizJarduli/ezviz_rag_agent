@@ -2,12 +2,20 @@ import { randomUUID } from "node:crypto";
 import express from "express";
 import * as z from "zod";
 import { initChroma } from "./services/chroma.service.js";
-import { query as ragQuery } from "./services/rag.service.js";
+import {
+  query as ragQuery,
+  queryDocumentation,
+} from "./services/rag.service.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import { env } from "./config/env.js";
+
+enum Tools {
+  QueryEzvizErrorCodes = "query_ezviz_error_codes",
+  QueryEzvizDocumentation = "query_ezviz_documentation",
+}
 
 const createEzvizServer = () => {
   const server = new McpServer(
@@ -21,7 +29,7 @@ const createEzvizServer = () => {
   );
 
   server.registerTool(
-    "query_ezviz_error_codes",
+    Tools.QueryEzvizErrorCodes,
     {
       description:
         "Search technical solutions for EZVIZ SDK error codes in the RAG database",
@@ -35,6 +43,33 @@ const createEzvizServer = () => {
       const result = await ragQuery(query);
       return {
         content: [{ type: "text", text: result.answer }],
+      };
+    },
+  );
+
+  server.registerTool(
+    Tools.QueryEzvizDocumentation,
+    {
+      description:
+        "Search EZVIZ documentation (SDKs, OpenAPI, glossary) for guides and references",
+      inputSchema: z.object({
+        query: z
+          .string()
+          .describe(
+            "Search query for documentation (e.g. 'how to initialize ios sdk')",
+          ),
+      }),
+    },
+    async ({ query }: { query: string }) => {
+      const result = await queryDocumentation(query);
+      const text = result
+        .map((chunk) => {
+          return `Source: ${chunk.metadata.source}\nTitle: ${chunk.metadata.title}\nURL: ${chunk.metadata.url}\n\n${chunk.text}`;
+        })
+        .join("\n\n---\n\n");
+
+      return {
+        content: [{ type: "text", text: text || "No documentation found." }],
       };
     },
   );
@@ -113,6 +148,11 @@ async function main() {
   app.listen(MCP_PORT, () => {
     console.log(`Ezvizinho Agent (SSE/HTTP) running on port ${MCP_PORT}`);
     console.log(`Endpoint for IDE: http://localhost:${MCP_PORT}/mcp`);
+    console.log(
+      `Available tools: ${Object.values(Tools)
+        .filter((v) => typeof v === "string")
+        .join(", ")}`,
+    );
   });
 }
 
