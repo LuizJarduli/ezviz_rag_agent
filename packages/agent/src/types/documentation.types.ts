@@ -5,13 +5,21 @@ export interface DocumentationChunk {
 }
 
 export interface DocumentationMetadata {
-  source: string; // e.g., 'ios_sdk', 'android_sdk', 'openapi', 'glossary'
+  // 'ios_sdk', 'android_sdk', 'openapi'
+  source: string;
+  // 'ios', 'android', 'js', 'cross-platform'
+  platform: string;
   title: string;
   url: string;
+  // Side menu path
   section_path: string;
+  // 'error_code', 'tutorial', 'api_reference'
   type: string;
+  // 'en', 'pt', 'zh'
+  language: string;
+  // Prevent duplicity
+  hash: string;
   version?: string;
-  language?: string;
 }
 
 export interface IngestDocumentationRequest {

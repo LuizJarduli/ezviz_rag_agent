@@ -44,6 +44,8 @@ export async function addDocumentationChunks(
         type,
         version = "",
         language = "",
+        hash = "",
+        platform = "",
       } = metadata || {};
       return {
         source,
@@ -53,6 +55,8 @@ export async function addDocumentationChunks(
         type,
         version,
         language,
+        hash,
+        platform,
       };
     }),
     documents: chunks.map(({ text }) => text),
@@ -92,6 +96,8 @@ export async function queryDocumentation(
         type,
         version = "",
         language = "",
+        hash = "",
+        platform = "",
       } = metadata || {};
 
       const id = results.ids?.[0][index] ?? "";
@@ -108,6 +114,8 @@ export async function queryDocumentation(
           type,
           version,
           language,
+          hash,
+          platform,
         } as DocumentationMetadata,
       };
     });
