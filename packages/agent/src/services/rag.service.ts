@@ -83,9 +83,10 @@ export async function ingestErrorCodes(
 /**
  * Query with natural language or error code
  * Implements hybrid search:
- * 1. If query looks like a code, try exact lookup (by ID or metadata)
- * 2. If found, use that as the single source
- * 3. If not found or not a code, use vector search
+ *
+ *  - If query looks like a code, try exact lookup (by ID or metadata)
+ *  - If found, use that as the single source
+ *  - If not found or not a code, use vector search
  */
 export async function query(
   queryText: string,
@@ -93,8 +94,6 @@ export async function query(
 ): Promise<QueryResponse> {
   let sources: ErrorCode[] = [];
 
-  // Check if query looks like an error code (digits, maybe hex, maybe negative)
-  // e.g. "60043", "0x123", "-100"
   const isCode = /^-?\d+|0x[0-9a-fA-F]+$/.test(queryText.trim());
 
   if (isCode) {
@@ -103,10 +102,8 @@ export async function query(
       `[DEBUG][rag] Query '${cleanCode}' looks like a code, trying exact lookup...`,
     );
 
-    // Try direct ID lookup first
     let exactMatch = await getByCode(cleanCode);
 
-    // If not found by ID, try metadata lookup (handling module_code ID format)
     if (!exactMatch) {
       exactMatch = await getByMetadataCode(cleanCode);
     }
@@ -121,12 +118,10 @@ export async function query(
     }
   }
 
-  // If no sources yet (not a code, or code lookup failed), use vector search
   if (sources.length === 0) {
     sources = await queryByText(queryText, topK);
   }
 
-  // Generate response with context
   const answer = await generateResponse(queryText, sources);
 
   return { answer, sources };
