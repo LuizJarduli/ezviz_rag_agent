@@ -63,7 +63,7 @@ const crawl = async () => {
   const sideMenu = await page.locator(SIDE_MENU_SELECTOR);
   await nestingUntilOnlyChild(page, sideMenu);
   await browser.close();
-  console.log("\t -- All SDK pages crawled successfully!");
+  console.log("\t -- All SDK pages crawled successfully! Bravo vince");
 };
 
 crawl();
