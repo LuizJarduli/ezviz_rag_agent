@@ -6,7 +6,8 @@
         "api:build": "pnpm -r api:build",
         "typecheck": "pnpm -r typecheck",
         "mcp:dev": "pnpm -r mcp:dev",
-        "mcp:build": "pnpm -r mcp:build"
+        "mcp:build": "pnpm -r mcp:build",
+        "crawl:sdk": "pnpm -r crawl:sdk"
     },
     "devDependencies": {
         "typescript": "^5.7.3"

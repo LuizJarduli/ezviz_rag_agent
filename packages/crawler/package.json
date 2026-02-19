@@ -5,7 +5,9 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "crawl:sdk": "tsx src/crawlers/ys7-sdk.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
