@@ -1,19 +1,26 @@
-import { chromium } from "playwright";
+import { chromium, Locator, Page } from "playwright";
+import { saveTextContentOnFile } from "./helpers/saveTextContentOnFile.js";
+import {
+  DOC_CONTENT_SELECTOR,
+  USER_AGENT,
+  SDK_DOCS_URL,
+  SIDE_MENU_SELECTOR,
+  AVOID_PARENTS,
+  AVOID_NON_SDK_DOCS,
+} from "./constants/constants.js";
 
-const SDK_DOCS_URL = "https://open.ys7.com/help/4366";
-const SIDE_MENU_SELECTOR = "#left-nav > ul.ezd-menu";
-const DOC_CONTENT_SELECTOR = "#mian-section > div.main > div.doc > div";
-const BREADCRUMBS_SELECTOR =
-  "#mian-section > div.main > div.doc > div > div.custom-html-style > div.ezd-breadcrumb";
-
-const crawl = async () => {
-  const browser = await chromium.launch({ headless: false });
-  const page = await browser.newPage();
-  await page.goto(SDK_DOCS_URL, { waitUntil: "networkidle" });
-
-  const sideMenu = await page.locator(SIDE_MENU_SELECTOR);
-  const sideMenuSideMenus = sideMenu.locator("li");
+const nestingUntilOnlyChild = async (
+  page: Page,
+  locator: Locator,
+  level: number = 2,
+  sectionPath: string = "",
+) => {
+  const sideMenuSideMenus = locator.locator(`li[class*=level${level}]`);
   const sideMenuSideMenusCount = await sideMenuSideMenus.count();
+
+  if (sideMenuSideMenusCount === 0) {
+    return;
+  }
 
   for (let i = 0; i < sideMenuSideMenusCount; i++) {
     const sideMenuSideMenu = sideMenuSideMenus.nth(i);
@@ -21,25 +28,42 @@ const crawl = async () => {
       .locator(".ezd-menu-title-content")
       .textContent();
 
+    if (
+      AVOID_PARENTS.includes(sideMenuSideMenuText ?? "") ||
+      AVOID_NON_SDK_DOCS.includes(sideMenuSideMenuText ?? "")
+    ) {
+      continue;
+    }
+
     console.log("Accessing menu: ", sideMenuSideMenuText);
+
     await sideMenuSideMenu.click();
-    await page.waitForTimeout(2000);
     await page.waitForLoadState("networkidle");
 
-    const docBreadcrumbs = await page.locator(BREADCRUMBS_SELECTOR);
-    const docBreadcrumbsItems = await docBreadcrumbs.locator(
-      ".ezd-breadcrumb-link",
+    const docContent = await page.locator(DOC_CONTENT_SELECTOR).innerHTML();
+
+    await saveTextContentOnFile(
+      `./docs/${sectionPath ? sectionPath + "/" : ""}${sideMenuSideMenuText}.md`,
+      docContent || "",
     );
-    const docBreadcrumbsItemsCount = await docBreadcrumbsItems.count();
 
-    for (let j = 0; j < docBreadcrumbsItemsCount; j++) {
-      const docBreadcrumbsItem = docBreadcrumbsItems.nth(j);
-      const docBreadcrumbsItemText = await docBreadcrumbsItem.textContent();
-      console.log("Doc breadcrumbs scraped: ", docBreadcrumbsItemText);
-    }
+    await nestingUntilOnlyChild(
+      page,
+      sideMenuSideMenu,
+      level + 1,
+      sectionPath + "/" + sideMenuSideMenuText,
+    );
   }
+};
 
+const crawl = async () => {
+  const browser = await chromium.launch({ headless: false });
+  const page = await browser.newPage({ userAgent: USER_AGENT });
+  await page.goto(SDK_DOCS_URL, { waitUntil: "networkidle" });
+  const sideMenu = await page.locator(SIDE_MENU_SELECTOR);
+  await nestingUntilOnlyChild(page, sideMenu);
   await browser.close();
+  console.log("\t -- All SDK pages crawled successfully!");
 };
 
 crawl();
