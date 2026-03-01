@@ -62,14 +62,17 @@ const createEzvizServer = () => {
     },
     async ({ query }: { query: string }) => {
       const result = await queryDocumentation(query);
-      const text = result
-        .map((chunk) => {
-          return `Source: ${chunk.metadata.source}\nTitle: ${chunk.metadata.title}\nURL: ${chunk.metadata.url}\n\n${chunk.text}`;
+
+      let text = `Answer:\n${result.answer}\n\n---\n\n`;
+      text += "Sources referenced:\n";
+      text += result.sources
+        .map((chunk, i) => {
+          return `[${i + 1}] Title: ${chunk.metadata.title}\nPath: ${chunk.metadata.section_path}\nURL: ${chunk.metadata.url}`;
         })
-        .join("\n\n---\n\n");
+        .join("\n\n");
 
       return {
-        content: [{ type: "text", text: text || "No documentation found." }],
+        content: [{ type: "text", text: text }],
       };
     },
   );

@@ -4,7 +4,10 @@ import type {
   IngestResponse,
 } from "../types/error-code.types.js";
 import { parseErrorCodes, transformErrorCode } from "../utils/parser.js";
-import { generateResponse } from "./llm.service.js";
+import {
+  generateErrorCodeResponse,
+  generateDocumentationResponse,
+} from "./llm.service.js";
 import {
   addErrorCodes,
   queryByText,
@@ -16,7 +19,10 @@ import {
   queryDocumentation as queryDocs,
   getStats as getDocStats,
 } from "./collections/documentation.collection.js";
-import type { DocumentationChunk } from "../types/documentation.types.js";
+import type {
+  DocumentationChunk,
+  DocumentationQueryResponse,
+} from "../types/documentation.types.js";
 
 /**
  * Ingest error codes from raw JSON data
@@ -122,7 +128,7 @@ export async function query(
     sources = await queryByText(queryText, topK);
   }
 
-  const answer = await generateResponse(queryText, sources);
+  const answer = await generateErrorCodeResponse(queryText, sources);
 
   return { answer, sources };
 }
@@ -157,8 +163,11 @@ export async function getAllErrors(
 export async function queryDocumentation(
   queryText: string,
   topK: number = 5,
-): Promise<DocumentationChunk[]> {
-  return queryDocs(queryText, topK);
+): Promise<DocumentationQueryResponse> {
+  const sources = await queryDocs(queryText, topK);
+  const answer = await generateDocumentationResponse(queryText, sources);
+
+  return { answer, sources };
 }
 
 /**

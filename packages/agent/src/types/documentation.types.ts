@@ -25,3 +25,8 @@ export interface DocumentationMetadata {
 export interface IngestDocumentationRequest {
   chunks: DocumentationChunk[];
 }
+
+export interface DocumentationQueryResponse {
+  answer: string;
+  sources: DocumentationChunk[];
+}
