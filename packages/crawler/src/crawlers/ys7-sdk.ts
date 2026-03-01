@@ -43,7 +43,7 @@ const nestingUntilOnlyChild = async (
     const docContent = await page.locator(DOC_CONTENT_SELECTOR).innerHTML();
 
     await saveTextContentOnFile(
-      `./docs/${sectionPath ? sectionPath + "/" : ""}${sideMenuSideMenuText}.md`,
+      `./docs/sdk/${sectionPath ? sectionPath + "/" : ""}${sideMenuSideMenuText}.md`,
       docContent || "",
     );
 
@@ -59,7 +59,7 @@ const nestingUntilOnlyChild = async (
 const crawl = async () => {
   const browser = await chromium.launch({ headless: false });
   const page = await browser.newPage({ userAgent: USER_AGENT });
-  await page.goto(SDK_DOCS_URL, { waitUntil: "networkidle" });
+  await page.goto(SDK_DOCS_URL, { waitUntil: "networkidle", timeout: 60000 });
   const sideMenu = await page.locator(SIDE_MENU_SELECTOR);
   await nestingUntilOnlyChild(page, sideMenu);
   await browser.close();
