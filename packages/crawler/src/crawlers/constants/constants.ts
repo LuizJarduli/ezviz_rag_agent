@@ -1,7 +1,6 @@
 export const SDK_DOCS_URL = "https://open.ys7.com/help/4366";
 export const SIDE_MENU_SELECTOR = "#left-nav > ul.ezd-menu.ezd-menu-root";
-export const DOC_CONTENT_SELECTOR =
-  "#mian-section > div.main > div.doc > div > div.custom-html-style";
+export const DOC_CONTENT_SELECTOR = "#main-content-box > div.custom-html-style";
 export const USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
 
