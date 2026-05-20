@@ -1,0 +1,23 @@
+{
+  "version": "0.0.0-fixture",
+  "locale": "pt-BR",
+  "pdf": { "title": "Fixture Dup", "output": "dist/fixture.pdf" },
+  "chapters": [
+    {
+      "id": "dup",
+      "part": "shared",
+      "module": "shared",
+      "path": "a.md",
+      "title": "A",
+      "required": true
+    },
+    {
+      "id": "dup",
+      "part": "shared",
+      "module": "shared",
+      "path": "b.md",
+      "title": "B",
+      "required": true
+    }
+  ]
+}

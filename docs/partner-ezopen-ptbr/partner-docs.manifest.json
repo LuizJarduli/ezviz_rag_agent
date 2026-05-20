@@ -1,0 +1,236 @@
+<!-- Authoring: guards follow ADR-004 — shared-ezopen needs ezopen:// plus .live/.rec; web 02–03 need ezopen, stream suffix, accessToken, mount keywords; mosaic platform chapters must link Part V. -->
+{
+  "version": "1.0.0",
+  "locale": "pt-BR",
+  "pdf": {
+    "title": "EZVIZ EZOpen — Guia de Integração para Parceiros",
+    "output": "dist/ezviz-ezopen-partner-ptbr.pdf"
+  },
+  "chapters": [
+    {
+      "id": "shared-ezopen",
+      "part": "shared",
+      "module": "shared",
+      "path": "part-01-shared-concepts/00-ezopen-protocol.md",
+      "title": "Referência do protocolo EZOpen",
+      "required": true,
+      "guards": {
+        "mustMatchOne": ["ezopen://", "\\.live", "\\.rec"]
+      }
+    },
+    {
+      "id": "shared-auth",
+      "part": "shared",
+      "module": "shared",
+      "path": "part-01-shared-concepts/01-auth.md",
+      "title": "Autenticação (conceitos compartilhados)",
+      "required": true
+    },
+    {
+      "id": "shared-glossary",
+      "part": "shared",
+      "module": "shared",
+      "path": "part-01-shared-concepts/02-glossary-capability-matrix.md",
+      "title": "Glossário e matriz de capacidades",
+      "required": true
+    },
+    {
+      "id": "android-auth",
+      "part": "android",
+      "module": "android",
+      "path": "part-02-android/01-auth.md",
+      "title": "Autenticação (Android)",
+      "required": true
+    },
+    {
+      "id": "android-live-preview",
+      "part": "android",
+      "module": "android",
+      "path": "part-02-android/02-live-preview.md",
+      "title": "Visualização ao vivo (Android)",
+      "required": true
+    },
+    {
+      "id": "android-playback",
+      "part": "android",
+      "module": "android",
+      "path": "part-02-android/03-playback.md",
+      "title": "Reprodução (Android)",
+      "required": true
+    },
+    {
+      "id": "android-device-control",
+      "part": "android",
+      "module": "android",
+      "path": "part-02-android/04-device-control.md",
+      "title": "Controle de dispositivo (Android)",
+      "required": true
+    },
+    {
+      "id": "android-mosaic",
+      "part": "android",
+      "module": "android",
+      "path": "part-02-android/05-mosaic.md",
+      "title": "Mosaico / multi-preview (Android)",
+      "required": true,
+      "guards": {
+        "mustMatchOne": ["part-05-best-practices/01-mosaic-performance"]
+      },
+      "mustLinkTo": ["part-05-best-practices/01-mosaic-performance.md"]
+    },
+    {
+      "id": "android-wifi-config",
+      "part": "android",
+      "module": "android",
+      "path": "part-02-android/06-wifi-config.md",
+      "title": "Configuração Wi-Fi (Android)",
+      "required": true
+    },
+    {
+      "id": "ios-auth",
+      "part": "ios",
+      "module": "ios",
+      "path": "part-03-ios/01-auth.md",
+      "title": "Autenticação (iOS)",
+      "required": true
+    },
+    {
+      "id": "ios-live-preview",
+      "part": "ios",
+      "module": "ios",
+      "path": "part-03-ios/02-live-preview.md",
+      "title": "Visualização ao vivo (iOS)",
+      "required": true
+    },
+    {
+      "id": "ios-playback",
+      "part": "ios",
+      "module": "ios",
+      "path": "part-03-ios/03-playback.md",
+      "title": "Reprodução (iOS)",
+      "required": true
+    },
+    {
+      "id": "ios-device-control",
+      "part": "ios",
+      "module": "ios",
+      "path": "part-03-ios/04-device-control.md",
+      "title": "Controle de dispositivo (iOS)",
+      "required": true
+    },
+    {
+      "id": "ios-mosaic",
+      "part": "ios",
+      "module": "ios",
+      "path": "part-03-ios/05-mosaic.md",
+      "title": "Mosaico / multi-preview (iOS)",
+      "required": true,
+      "guards": {
+        "mustMatchOne": ["part-05-best-practices/01-mosaic-performance"]
+      },
+      "mustLinkTo": ["part-05-best-practices/01-mosaic-performance.md"]
+    },
+    {
+      "id": "ios-wifi-config",
+      "part": "ios",
+      "module": "ios",
+      "path": "part-03-ios/06-wifi-config.md",
+      "title": "Configuração Wi-Fi (iOS)",
+      "required": true
+    },
+    {
+      "id": "web-auth",
+      "part": "web",
+      "module": "web",
+      "path": "part-04-web/01-auth.md",
+      "title": "Autenticação (Web)",
+      "required": true
+    },
+    {
+      "id": "web-live-preview",
+      "part": "web",
+      "module": "web",
+      "path": "part-04-web/02-live-preview.md",
+      "title": "Visualização ao vivo (Web)",
+      "required": true,
+      "guards": {
+        "mustMatchOne": [
+          "ezopen://",
+          "\\.live",
+          "accessToken",
+          "(?i)(container|DOM|montar|elemento html)"
+        ]
+      },
+      "mustLinkTo": ["part-01-shared-concepts/00-ezopen-protocol.md"]
+    },
+    {
+      "id": "web-playback",
+      "part": "web",
+      "module": "web",
+      "path": "part-04-web/03-playback.md",
+      "title": "Reprodução (Web)",
+      "required": true,
+      "guards": {
+        "mustMatchOne": [
+          "ezopen://",
+          "\\.rec",
+          "accessToken",
+          "(?i)(container|DOM|montar|elemento html)"
+        ]
+      },
+      "mustLinkTo": ["part-01-shared-concepts/00-ezopen-protocol.md"]
+    },
+    {
+      "id": "web-device-control",
+      "part": "web",
+      "module": "web",
+      "path": "part-04-web/04-device-control.md",
+      "title": "Controle de dispositivo (Web)",
+      "required": true
+    },
+    {
+      "id": "web-mosaic",
+      "part": "web",
+      "module": "web",
+      "path": "part-04-web/05-mosaic.md",
+      "title": "Mosaico / multi-preview (Web)",
+      "required": true,
+      "guards": {
+        "mustMatchOne": ["part-05-best-practices/01-mosaic-performance"]
+      },
+      "mustLinkTo": ["part-05-best-practices/01-mosaic-performance.md"]
+    },
+    {
+      "id": "web-wifi-config",
+      "part": "web",
+      "module": "web",
+      "path": "part-04-web/06-wifi-config.md",
+      "title": "Configuração Wi-Fi (Web)",
+      "required": true
+    },
+    {
+      "id": "best-practices-mosaic-performance",
+      "part": "best-practices",
+      "module": "best-practices",
+      "path": "part-05-best-practices/01-mosaic-performance.md",
+      "title": "Desempenho e mosaico",
+      "required": true
+    },
+    {
+      "id": "best-practices-general-integration",
+      "part": "best-practices",
+      "module": "best-practices",
+      "path": "part-05-best-practices/02-general-integration.md",
+      "title": "Integração geral",
+      "required": true
+    },
+    {
+      "id": "best-practices-security",
+      "part": "best-practices",
+      "module": "best-practices",
+      "path": "part-05-best-practices/03-security.md",
+      "title": "Segurança",
+      "required": true
+    }
+  ]
+}

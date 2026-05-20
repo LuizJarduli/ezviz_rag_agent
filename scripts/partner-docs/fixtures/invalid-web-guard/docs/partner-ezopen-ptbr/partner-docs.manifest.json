@@ -1,0 +1,18 @@
+{
+  "version": "0.0.0-fixture",
+  "locale": "pt-BR",
+  "pdf": { "title": "Fixture Web Guard", "output": "dist/fixture.pdf" },
+  "chapters": [
+    {
+      "id": "web-live-preview",
+      "part": "web",
+      "module": "web",
+      "path": "part-04-web/02-live-preview.md",
+      "title": "Live Web",
+      "required": true,
+      "guards": {
+        "mustMatchOne": ["ezopen://", "\\.live", "accessToken"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "version": "0.0.0-fixture",
+  "locale": "pt-BR",
+  "pdf": {
+    "title": "Fixture Valid",
+    "output": "dist/fixture.pdf"
+  },
+  "chapters": [
+    {
+      "id": "shared-ezopen",
+      "part": "shared",
+      "module": "shared",
+      "path": "part-01-shared-concepts/00-ezopen-protocol.md",
+      "title": "EZOpen",
+      "required": true,
+      "guards": {
+        "mustMatchOne": ["ezopen://", "\\.live", "\\.rec"]
+      }
+    },
+    {
+      "id": "web-live-preview",
+      "part": "web",
+      "module": "web",
+      "path": "part-04-web/02-live-preview.md",
+      "title": "Live Web",
+      "required": true,
+      "guards": {
+        "mustMatchOne": [
+          "ezopen://",
+          "\\.live",
+          "accessToken",
+          "(?i)(container|DOM|montar|elemento html)"
+        ]
+      },
+      "mustLinkTo": ["part-01-shared-concepts/00-ezopen-protocol.md"]
+    },
+    {
+      "id": "web-mosaic",
+      "part": "web",
+      "module": "web",
+      "path": "part-04-web/05-mosaic.md",
+      "title": "Mosaic Web",
+      "required": true,
+      "mustLinkTo": ["part-05-best-practices/01-mosaic-performance.md"]
+    },
+    {
+      "id": "best-mosaic",
+      "part": "best-practices",
+      "module": "best-practices",
+      "path": "part-05-best-practices/01-mosaic-performance.md",
+      "title": "Mosaic BP",
+      "required": true
+    }
+  ]
+}

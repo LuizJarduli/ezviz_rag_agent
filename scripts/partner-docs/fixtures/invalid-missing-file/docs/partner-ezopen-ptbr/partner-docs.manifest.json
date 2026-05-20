@@ -1,0 +1,15 @@
+{
+  "version": "0.0.0-fixture",
+  "locale": "pt-BR",
+  "pdf": { "title": "Fixture Missing", "output": "dist/fixture.pdf" },
+  "chapters": [
+    {
+      "id": "missing-chapter",
+      "part": "shared",
+      "module": "shared",
+      "path": "part-01-shared-concepts/99-does-not-exist.md",
+      "title": "Missing",
+      "required": true
+    }
+  ]
+}

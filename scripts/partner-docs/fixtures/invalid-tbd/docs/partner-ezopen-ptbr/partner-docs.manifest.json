@@ -1,0 +1,15 @@
+{
+  "version": "0.0.0-fixture",
+  "locale": "pt-BR",
+  "pdf": { "title": "Fixture TBD", "output": "dist/fixture.pdf" },
+  "chapters": [
+    {
+      "id": "tbd-chapter",
+      "part": "shared",
+      "module": "shared",
+      "path": "part-01-shared-concepts/00-ezopen-protocol.md",
+      "title": "TBD",
+      "required": true
+    }
+  ]
+}

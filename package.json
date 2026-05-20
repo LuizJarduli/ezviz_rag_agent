@@ -7,9 +7,16 @@
         "typecheck": "pnpm -r typecheck",
         "mcp:dev": "pnpm -r mcp:dev",
         "mcp:build": "pnpm -r mcp:build",
-        "crawl:sdk": "pnpm -r crawl:sdk"
+        "crawl:sdk": "pnpm -r crawl:sdk",
+        "partner-docs:validate": "node --experimental-strip-types scripts/partner-docs/validate.ts",
+        "partner-docs:build": "bash scripts/partner-docs/build-pdf.sh",
+        "partner-docs:split": "node --experimental-strip-types scripts/partner-docs/split-modules.ts",
+        "partner-docs:test": "node --experimental-strip-types --test scripts/partner-docs/scaffold-structure.test.ts scripts/partner-docs/manifest.test.ts scripts/partner-docs/validate.test.ts scripts/partner-docs/validate.integration.test.ts scripts/partner-docs/build.test.ts scripts/partner-docs/build.integration.test.ts scripts/partner-docs/mermaid-preprocess.test.ts scripts/partner-docs/split-modules.test.ts scripts/partner-docs/split-modules.integration.test.ts scripts/partner-docs/platform-ios-content.test.ts scripts/partner-docs/platform-web-content.test.ts scripts/partner-docs/package-scripts.test.ts scripts/partner-docs/ci-workflow.test.ts",
+        "partner-docs:test:coverage": "node --experimental-strip-types --experimental-test-coverage --test scripts/partner-docs/scaffold-structure.test.ts scripts/partner-docs/manifest.test.ts scripts/partner-docs/validate.test.ts scripts/partner-docs/validate.integration.test.ts scripts/partner-docs/build.test.ts scripts/partner-docs/build.integration.test.ts scripts/partner-docs/mermaid-preprocess.test.ts scripts/partner-docs/split-modules.test.ts scripts/partner-docs/split-modules.integration.test.ts scripts/partner-docs/platform-ios-content.test.ts scripts/partner-docs/platform-web-content.test.ts scripts/partner-docs/package-scripts.test.ts scripts/partner-docs/ci-workflow.test.ts"
     },
     "devDependencies": {
+        "@mermaid-js/mermaid-cli": "^11.12.0",
+        "puppeteer": "^24.43.1",
         "typescript": "^5.7.3"
     }
 }
